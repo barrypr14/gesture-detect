@@ -18,7 +18,7 @@ My simulation object model
 
 Using the movement process of fingers and wrists, the bending sensor and MPU605 record the movement angles and transmit them to the computer to simulate the data transmission/reception of fingers and wrists. We string the data collected by Arduino into strings, and then It is transmitted to the computer, the following code collects the data, puts the collected data into the linkedlist first, and removes the data after using it to reduce memory waste.  
 
-ˋˋˋC#
+```C#
   public void getReceviedData(){
     while(isRun){
       try{
@@ -33,4 +33,4 @@ Using the movement process of fingers and wrists, the bending sensor and MPU605 
       }
     }catch(TimeoutException){}
   }
-ˋˋˋ
+```
