@@ -33,3 +33,4 @@ Using the movement process of fingers and wrists, the bending sensor and MPU605 
       }
     }catch(TimeoutException){}
   }
+ˋˋˋ
