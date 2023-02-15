@@ -13,7 +13,7 @@ Fix the MPU6050 on the horizontal plane, increase the angle of this horizontal p
 In real life, noise will affect the accuracy of the sensor, so we use the Kalman filter to filter the MPU6050, and we refer to the built-in Kalman filter of the arduino library.
 some unsolved problem : computing time cause the delay.
 #### Unity model
-My simulation object model
+My simulation object model.  
 ![image](https://user-images.githubusercontent.com/63724884/218973160-b98e7b59-00f7-4b05-9713-4290fe89e0b7.png)
 
 Using the movement process of fingers and wrists, the bending sensor and MPU605 record the movement angles and transmit them to the computer to simulate the data transmission/reception of fingers and wrists. We string the data collected by Arduino into strings, and then It is transmitted to the computer, the following code collects the data, puts the collected data into the linkedlist first, and removes the data after using it to reduce memory waste.  
@@ -33,4 +33,23 @@ Using the movement process of fingers and wrists, the bending sensor and MPU605 
       }
     }catch(TimeoutException){}
   }
+  
+  public String getCommand(){
+    string s = "";
+    if(commandLinkedList.count > 0){
+      s = commandLinkedList.First.Value;
+      commandLinkedList.RemoveFirst();
+      return s;
+    }
+    return "";
+  }
 ```
+In the process of object rotation, generally speaking, the concept of Euler Angle is used to rotate, but this will cause the problem of universal lock, and the concept of quaternion is used to avoid this problem. There is a convenient function in Unity called `Quaternion.Euler(new Vector)`, can easily convert Euler Angle into quaternion form.
+
+During the Unity simulation process, we set up a multi-threading method to avoid the problem that the simulation is not real-time when our computer reads the data, and because we have two Arduino Unos, we open one more thread to synchronize.
+```C#
+  mythread = new Thread(getReceivedData);
+  mythread.isBackground = true;
+  mythread.Start();
+```
+When reading the bending sensor, because each bending sensor will have different values when standing still, it is assumed that when the tester wears gloves, the palm of the hand will be placed on the table, and the maximum value of each joint When the rotation angle is 90 degrees, when the device is started, the collected data is stored in the list continuously, and the maximum value is searched, which will make the search speed slower and delay the simulation, so the method is changed to a computer It will always judge the maximum and minimum values of the bending sensor and store them in the array, reducing the time to search the entire list again.
